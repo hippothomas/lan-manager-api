@@ -8,7 +8,3 @@
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
-
-###> Custom ###
-.env
-###< Custom ###
