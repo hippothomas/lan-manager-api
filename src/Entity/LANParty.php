@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\LANPartyRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use App\Repository\LANPartyRepository;
 
+#[ApiResource(shortName: "lan_parties")]
 #[ORM\Entity(repositoryClass: LANPartyRepository::class)]
 class LANParty
 {
