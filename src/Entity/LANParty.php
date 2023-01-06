@@ -44,7 +44,7 @@ class LANParty
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $dateSart = null;
+    private ?\DateTimeInterface $dateStart = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateEnd = null;
@@ -168,14 +168,14 @@ class LANParty
         return $this;
     }
 
-    public function getDateSart(): ?\DateTimeInterface
+    public function getDateStart(): ?\DateTimeInterface
     {
-        return $this->dateSart;
+        return $this->dateStart;
     }
 
-    public function setDateSart(\DateTimeInterface $dateSart): self
+    public function setDateStart(\DateTimeInterface $dateStart): self
     {
-        $this->dateSart = $dateSart;
+        $this->dateStart = $dateStart;
 
         return $this;
     }
