@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\RegistrationRepository;
+use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\RegistrationRepository;
 
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: RegistrationRepository::class)]
 class Registration
 {
@@ -109,5 +111,18 @@ class Registration
         $this->updated = $updated;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updatedTimestamps(): void
+    {
+        $dateTimeNow = new DateTime('now');
+
+        $this->setUpdated($dateTimeNow);
+
+        if ($this->getCreated() === null) {
+            $this->setCreated($dateTimeNow);
+        }
     }
 }

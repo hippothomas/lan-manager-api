@@ -2,14 +2,16 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\LANPartyRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ApiResource(shortName: "lan_parties")]
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: LANPartyRepository::class)]
 class LANParty
 {
@@ -224,6 +226,19 @@ class LANParty
         $this->updated = $updated;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function updatedTimestamps(): void
+    {
+        $dateTimeNow = new DateTime('now');
+
+        $this->setUpdated($dateTimeNow);
+
+        if ($this->getCreated() === null) {
+            $this->setCreated($dateTimeNow);
+        }
     }
 
     /**
