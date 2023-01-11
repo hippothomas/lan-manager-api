@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+# PHPUnit
+TESTS="php bin/phpunit"
+
+# Check if we actually have commits to push
+commits=`git log @{u}..`
+if [ -z "$commits" ]; then
+    exit 0
+fi
+
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+if [[ $current_branch = 'develop' || $current_branch = 'master' ]]; then
+	$TESTS
+	RESULT=$?
+	if [[ ${RESULT} -ne 0 ]]
+	then
+		RED='\033[0;31m'
+		printf  "${RED}Unit tests failed. Commit rejected"
+	fi
+	exit ${RESULT}
+fi
+exit 0
