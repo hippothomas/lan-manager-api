@@ -21,7 +21,9 @@ class AppFixtures extends Fixture
 		for ($i=0; $i < 20; $i++) {
 			$user = new User();
 			$user->setUsername($faker->userName());
-			$user->setPassword($faker->password());
+			$user->setDiscordId($faker->numberBetween(100000000, 999999999));
+			$user->setDiscordUsername($user->getUsername()."#".$faker->numberBetween(1000, 9999));
+			$user->setAvatar("https://randomuser.me/api/portraits/men/".$faker->numberBetween(1, 99).".jpg");
 			$user->setRoles(["ROLE_USER"]);
 			$manager->persist($user);
 			$users[] = $user;

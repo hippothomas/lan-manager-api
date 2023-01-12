@@ -3,24 +3,23 @@
 namespace App\Entity;
 
 use DateTime;
+use ApiPlatform\Metadata\Get;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use App\Controller\WhoAmIController;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
-#[ApiResource(
-	normalizationContext: ['groups' => ['user', 'user_details', 'registration']],
-	denormalizationContext: ['groups' => ['user', 'user_details', 'user:write_only']]
-)]
+#[ApiResource()]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -35,12 +34,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user'])]
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
-    #[ORM\Column]
-    #[Groups(['user:write_only'])]
-    private ?string $password = null;
+	#[ORM\Column(length: 255, nullable: true)]
+	private ?string $discordId = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $discordUsername = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $avatar = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups(['user'])]
@@ -105,17 +106,38 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
-    public function getPassword(): string
+    public function getDiscordId(): ?string
     {
-        return $this->password;
+        return $this->discordId;
     }
 
-    public function setPassword(string $password): self
+    public function setDiscordId(?string $discordId): self
     {
-        $this->password = $password;
+        $this->discordId = $discordId;
+
+        return $this;
+    }
+
+    public function getDiscordUsername(): ?string
+    {
+        return $this->discordUsername;
+    }
+
+    public function setDiscordUsername(?string $discordUsername): self
+    {
+        $this->discordUsername = $discordUsername;
+
+        return $this;
+    }
+
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?string $avatar): self
+    {
+        $this->avatar = $avatar;
 
         return $this;
     }

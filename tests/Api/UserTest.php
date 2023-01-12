@@ -26,8 +26,7 @@ class UserTest extends ApiTestCase
     public function testCreateUser(): void
     {
         $response = static::createClient()->request('POST', '/api/users', ['json' => [
-			"username" => "bestplayer",
-			"password" => "password"
+			"username" => "bestplayer"
 		]]);
 
         $this->assertResponseStatusCodeSame(201);
