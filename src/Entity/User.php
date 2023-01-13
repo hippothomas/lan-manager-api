@@ -4,7 +4,9 @@ namespace App\Entity;
 
 use DateTime;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
 use Doctrine\DBAL\Types\Types;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use App\Controller\WhoAmIController;
@@ -15,7 +17,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ApiResource()]
+#[ApiResource(operations: [
+	new GetCollection(security: "is_granted('ROLE_USER')"),
+	new Get(security: "is_granted('ROLE_USER')"),
+	new Put(security: "object == user"),
+	new Delete(security: "object == user"),
+])]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
