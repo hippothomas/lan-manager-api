@@ -33,3 +33,8 @@ services:
                 urlAccessToken: 'https://discord.com/api/oauth2/token',
                 urlResourceOwnerDetails: 'https://discord.com/api/oauth2/@me'
             }
+
+    App\Doctrine\CurrentUserExtension:
+        tags:
+            - { name: api_platform.doctrine.orm.query_extension.collection }
+            - { name: api_platform.doctrine.orm.query_extension.item }

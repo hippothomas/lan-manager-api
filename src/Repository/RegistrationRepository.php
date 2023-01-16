@@ -39,6 +39,18 @@ class RegistrationRepository extends ServiceEntityRepository
         }
     }
 
+    public function findStaff(int $id): array
+    {
+        return $this->createQueryBuilder('r')
+			->innerJoin('App\Entity\LANParty', 'lp', 'WITH', 'lp.id = r.lanParty')
+            ->andWhere('lp.id = :id')
+            ->andWhere("r.roles LIKE '%\"STAFF\"%'")
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return Registration[] Returns an array of Registration objects
 //     */

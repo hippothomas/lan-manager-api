@@ -3,16 +3,22 @@
 namespace App\Entity;
 
 use DateTime;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
 use Doctrine\DBAL\Types\Types;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\RegistrationRepository;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use App\Repository\RegistrationRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(
-	normalizationContext: ['groups' => ['registration', 'user', 'lanparty']],
-	denormalizationContext: ['groups' => ['registration']]
-)]
+#[ApiResource(operations: [
+	new GetCollection(security: "is_granted('ROLE_USER')"),
+	new Get(security: "is_granted('ROLE_USER')"),
+	new Put(security: "is_granted('REGISTRATION_STAFF', object)"),
+	new Delete(security: "object.getAccount() == user or is_granted('REGISTRATION_STAFF', object)"),
+])]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: RegistrationRepository::class)]
 class Registration
@@ -20,33 +26,26 @@ class Registration
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['registration'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'registrations')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['registration'])]
     private ?User $account = null;
 
     #[ORM\ManyToOne(inversedBy: 'registrations')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['registration'])]
     private ?LANParty $lanParty = null;
 
     #[ORM\Column(type: Types::ARRAY)]
-    #[Groups(['registration'])]
     private array $roles = [];
 
     #[ORM\Column(length: 255)]
-    #[Groups(['registration'])]
     private ?string $status = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['registration'])]
     private ?\DateTimeInterface $created = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['registration'])]
     private ?\DateTimeInterface $updated = null;
 
     public function getId(): ?int

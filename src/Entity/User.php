@@ -34,11 +34,9 @@ class User implements UserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Groups(['user', 'registration'])]
     private ?string $username = null;
 
     #[ORM\Column]
-    #[Groups(['user'])]
     private array $roles = [];
 
 	#[ORM\Column(length: 255, nullable: true)]
@@ -51,15 +49,12 @@ class User implements UserInterface
     private ?string $avatar = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['user'])]
     private ?\DateTimeInterface $created = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['user'])]
     private ?\DateTimeInterface $updated = null;
 
     #[ORM\OneToMany(mappedBy: 'account', targetEntity: Registration::class, orphanRemoval: true)]
-    #[Groups(['user_details'])]
     private Collection $registrations;
 
     public function __construct()
