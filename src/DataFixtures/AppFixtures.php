@@ -36,7 +36,7 @@ class AppFixtures extends Fixture
 			$lanparty->setName($faker->word());
 			$lanparty->setMaxPlayers($faker->numberBetween(2, 300));
 			$lanparty->setPrivate($faker->boolean());
-			$lanparty->setRegistrationOpen($faker->boolean());
+			$lanparty->setRegistrationOpen(($i==0) ? true : false);
 			$lanparty->setLocation($faker->address());
 			$lanparty->setCoverImage("https://picsum.photos/id/".mt_rand(1, 99)."/200/300");
 			$lanparty->setWebsite($faker->url());
@@ -49,11 +49,17 @@ class AppFixtures extends Fixture
 		}
 
 		// Generating Registrations for each user
-		foreach ($users as $user) {
+		foreach ($users as $k => $user) {
+			$roles 	= ["PLAYER"];
+			$lan 	= $lanparties[mt_rand(0, count($lanparties)-1)];
+			if ($k == 0) {
+				$roles 	= ["STAFF"];
+				$lan 	= $lanparties[0];
+			}
 			$registration = new Registration();
 			$registration->setAccount($user);
-			$registration->setLanParty($lanparties[mt_rand(0, count($lanparties)-1)]);
-			$registration->setRoles(["PLAYER"]);
+			$registration->setLanParty($lan);
+			$registration->setRoles($roles);
 			$registration->setStatus("registered");
 			$manager->persist($registration);
 		}

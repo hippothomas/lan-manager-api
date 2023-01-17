@@ -51,6 +51,44 @@ class RegistrationRepository extends ServiceEntityRepository
         ;
     }
 
+	public function findByRole(array $roles): array
+	{
+		$qb = $this->createQueryBuilder('r');
+		$or = false;
+		foreach ($roles as $key => $role) {
+			if ($or) {
+				$qb->orWhere('r.roles like :role' . $key)
+					->setParameter('role' . $key, '%' . $role . '%');
+			} else {
+				$qb->where('r.roles like :role' . $key)
+					->setParameter('role' . $key, '%' . $role . '%');
+				$or = true;
+			}
+		}
+		return $qb->getQuery()
+				->getResult();
+	}
+
+	public function findByRoleAndLAN(array $roles, int $lanParty): array
+	{
+		$qb = $this->createQueryBuilder('r');
+		$or = false;
+		foreach ($roles as $key => $role) {
+			if ($or) {
+				$qb->orWhere('r.roles like :role' . $key)
+					->setParameter('role' . $key, '%' . $role . '%');
+			} else {
+				$qb->where('r.roles like :role' . $key)
+					->setParameter('role' . $key, '%' . $role . '%');
+				$or = true;
+			}
+		}
+		$qb->andWhere('r.lanParty = :lanparty')
+			->setParameter('lanparty', $lanParty);
+		return $qb->getQuery()
+				->getResult();
+	}
+
 //    /**
 //     * @return Registration[] Returns an array of Registration objects
 //     */

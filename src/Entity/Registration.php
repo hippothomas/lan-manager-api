@@ -42,9 +42,11 @@ class Registration
     private ?LANParty $lanParty = null;
 
     #[ORM\Column(type: Types::ARRAY)]
+	#[ApiProperty(securityPostDenormalize: "is_granted('REGISTRATION_STAFF', object)")]
     private array $roles = [];
 
     #[ORM\Column(length: 255)]
+	#[ApiProperty(securityPostDenormalize: "is_granted('REGISTRATION_STAFF', object)")]
     private ?string $status = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -140,6 +142,12 @@ class Registration
 
         if ($this->getCreated() === null) {
             $this->setCreated($dateTimeNow);
+        }
+        if (empty($this->getRoles())) {
+            $this->setRoles(["PLAYER"]);
+        }
+        if ($this->getStatus() === null) {
+            $this->setStatus("registered");
         }
     }
 }
