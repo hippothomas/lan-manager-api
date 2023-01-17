@@ -5,17 +5,21 @@ namespace App\Entity;
 use DateTime;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
 use Doctrine\DBAL\Types\Types;
 use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use App\Repository\RegistrationRepository;
+use App\Controller\CreateRegistrationController;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(operations: [
 	new GetCollection(security: "is_granted('ROLE_USER')"),
 	new Get(security: "is_granted('ROLE_USER')"),
+	new Post(security: "is_granted('ROLE_USER')", controller: CreateRegistrationController::class),
 	new Put(security: "is_granted('REGISTRATION_STAFF', object)"),
 	new Delete(security: "object.getAccount() == user or is_granted('REGISTRATION_STAFF', object)"),
 ])]
@@ -30,6 +34,7 @@ class Registration
 
     #[ORM\ManyToOne(inversedBy: 'registrations')]
     #[ORM\JoinColumn(nullable: false)]
+	#[ApiProperty(securityPostDenormalize: "is_granted('REGISTRATION_STAFF', object)")]
     private ?User $account = null;
 
     #[ORM\ManyToOne(inversedBy: 'registrations')]
