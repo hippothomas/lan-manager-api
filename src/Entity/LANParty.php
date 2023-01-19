@@ -3,18 +3,27 @@
 namespace App\Entity;
 
 use DateTime;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
 use Doctrine\DBAL\Types\Types;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\LANPartyRepository;
+use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
 	shortName: "lan_parties",
-	normalizationContext: ['groups' => ['lanparty', 'lanparty_details']],
-	denormalizationContext: ['groups' => ['lanparty', 'lanparty_details']]
+	operations: [
+		new GetCollection(security: "is_granted('ROLE_USER')"),
+		new Get(security: "is_granted('ROLE_USER')"),
+		new Post(security: "is_granted('ROLE_USER')"),
+		new Put(security: "is_granted('LANPARTY_STAFF', object)"),
+		new Delete(security: "is_granted('LANPARTY_STAFF', object)"),
+	]
 )]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: LANPartyRepository::class)]
@@ -26,59 +35,45 @@ class LANParty
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['lanparty'])]
     private ?string $name = null;
 
     #[ORM\Column]
-    #[Groups(['lanparty'])]
     private ?int $maxPlayers = null;
 
     #[ORM\Column]
-    #[Groups(['lanparty'])]
     private ?bool $private = null;
 
     #[ORM\Column]
-    #[Groups(['lanparty'])]
     private ?bool $registrationOpen = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['lanparty'])]
     private ?string $location = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['lanparty'])]
     private ?string $coverImage = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['lanparty'])]
     private ?string $website = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['lanparty'])]
     private ?float $cost = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['lanparty'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['lanparty'])]
     private ?\DateTimeInterface $dateStart = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['lanparty'])]
     private ?\DateTimeInterface $dateEnd = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['lanparty'])]
     private ?\DateTimeInterface $created = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['lanparty'])]
     private ?\DateTimeInterface $updated = null;
 
     #[ORM\OneToMany(mappedBy: 'lanParty', targetEntity: Registration::class, orphanRemoval: true)]
-    #[Groups(['lanparty_details'])]
     private Collection $registrations;
 
     public function __construct()
