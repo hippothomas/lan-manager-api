@@ -3,8 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Registration;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Registration>
@@ -87,6 +87,24 @@ class RegistrationRepository extends ServiceEntityRepository
 			->setParameter('lanparty', $lanParty);
 		return $qb->getQuery()
 				->getResult();
+	}
+
+	public function isUserRegistered(int $user, int $lanParty): bool
+	{
+		$result = $this->findOneBy(["account" => $user, "lanParty" => $lanParty], ['id' => 'DESC'], 1, 0);
+
+		return !empty($result);
+	}
+
+	public function removeRegistrationIfExist(int $user, int $lanParty): bool
+	{
+		$result = $this->findOneBy(["account" => $user, "lanParty" => $lanParty], ['id' => 'DESC'], 1, 0);
+
+		if (!empty($result)) {
+			$this->remove($result, true);
+			return true;
+		}
+		return false;
 	}
 
 //    /**

@@ -56,6 +56,9 @@ class RegistrationTest extends ApiTestCase
         $LANPartyRepository = static::getContainer()->get(LANPartyRepository::class);
         $lanparty = $LANPartyRepository->findOneBy(['registrationOpen' => true], ['id' => 'DESC'], 1, 0);
 
+        $registrationRepository = static::getContainer()->get(RegistrationRepository::class);
+		$registrationRepository->removeRegistrationIfExist($this->user->getId(), $lanparty->getId());
+
         $response = $client->request('POST', '/api/registrations', ['json' => [
 			"lanParty" => "/api/lan_parties/".$lanparty->getId()
 		]]);
@@ -117,12 +120,13 @@ class RegistrationTest extends ApiTestCase
 			"lanParty" => "/api/lan_parties/".$lanparty->getId()
 		]]);
 
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseStatusCodeSame(400);
 		$this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
         $this->assertJsonContains([
 			"@context" => "/api/contexts/Error",
 			"@type" => "hydra:Error",
-			"hydra:title" => "An error occurred"
+			"hydra:title" => "An error occurred",
+			"hydra:description" => 'Item not found for "/api/lan_parties/'.$lanparty->getId().'".'
 		]);
     }
 

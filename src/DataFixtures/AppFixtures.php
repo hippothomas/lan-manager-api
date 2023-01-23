@@ -31,12 +31,18 @@ class AppFixtures extends Fixture
 
 		// Generating LANParties
 		$lanparties = [];
+		$lan_case = [
+			[true, true],
+			[true, false],
+			[false, true],
+			[false, false],
+		];
 		for ($i=0; $i < 3; $i++) {
 			$lanparty = new LANParty();
 			$lanparty->setName($faker->word());
 			$lanparty->setMaxPlayers($faker->numberBetween(2, 300));
-			$lanparty->setPrivate($faker->boolean());
-			$lanparty->setRegistrationOpen(($i==0) ? true : false);
+			$lanparty->setPrivate($lan_case[$i][0]);
+			$lanparty->setRegistrationOpen($lan_case[$i][1]);
 			$lanparty->setLocation($faker->address());
 			$lanparty->setCoverImage("https://picsum.photos/id/".mt_rand(1, 99)."/200/300");
 			$lanparty->setWebsite($faker->url());
