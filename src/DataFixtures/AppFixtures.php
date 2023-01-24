@@ -6,6 +6,7 @@ use DateTime;
 use Faker\Factory;
 use App\Entity\User;
 use App\Entity\LANParty;
+use App\Entity\Information;
 use App\Entity\Registration;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -37,7 +38,7 @@ class AppFixtures extends Fixture
 			[false, true],
 			[false, false],
 		];
-		for ($i=0; $i < 3; $i++) {
+		for ($i=0; $i < 4; $i++) {
 			$lanparty = new LANParty();
 			$lanparty->setName($faker->word());
 			$lanparty->setMaxPlayers($faker->numberBetween(2, 300));
@@ -69,7 +70,23 @@ class AppFixtures extends Fixture
 			$registration->setStatus("registered");
 			$manager->persist($registration);
 		}
+        $manager->flush();
 
+		// Generating Registrations for LAN Parties
+		foreach ($lanparties as $k => $lanparty) {
+			$manager->refresh($lanparty);
+			for ($i=0; $i < mt_rand(1, 5); $i++) {
+				$registrations = $lanparty->getRegistrations();
+				$author = $registrations[mt_rand(0, count($registrations)-1)]->getAccount();
+
+				$information = new Information();
+				$information->setTitle(ucfirst($faker->word()));
+				$information->setContent($faker->text(500));
+				$information->addAuthor($author);
+				$information->setLanParty($lanparty);
+				$manager->persist($information);
+			}
+		}
         $manager->flush();
     }
 }

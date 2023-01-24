@@ -76,9 +76,13 @@ class LANParty
     #[ORM\OneToMany(mappedBy: 'lanParty', targetEntity: Registration::class, orphanRemoval: true)]
     private Collection $registrations;
 
+    #[ORM\OneToMany(mappedBy: 'lanParty', targetEntity: Information::class, orphanRemoval: true)]
+    private Collection $informations;
+
     public function __construct()
     {
         $this->registrations = new ArrayCollection();
+        $this->informations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -279,6 +283,36 @@ class LANParty
             // set the owning side to null (unless already changed)
             if ($registration->getLanParty() === $this) {
                 $registration->setLanParty(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Information>
+     */
+    public function getInformations(): Collection
+    {
+        return $this->informations;
+    }
+
+    public function addInformations(Information $informations): self
+    {
+        if (!$this->informations->contains($informations)) {
+            $this->informations->add($informations);
+            $informations->setLanParty($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInformations(Information $informations): self
+    {
+        if ($this->informations->removeElement($informations)) {
+            // set the owning side to null (unless already changed)
+            if ($informations->getLanParty() === $this) {
+                $informations->setLanParty(null);
             }
         }
 
