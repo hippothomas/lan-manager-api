@@ -88,6 +88,7 @@ class RegistrationTest extends ApiTestCase
 		// Retrieve random user
 		$userRepository = static::getContainer()->get(UserRepository::class);
 		$user = $userRepository->findOneBy([], ['id' => 'DESC'], 1, 0);
+		$registrationRepository->removeRegistrationIfExist($user->getId(), $registration->getLanParty()->getId());
 
         $response = $client->request('POST', '/api/registrations', ['json' => [
 			"account" => "/api/users/".$user->getId(),
@@ -115,6 +116,9 @@ class RegistrationTest extends ApiTestCase
 
         $LANPartyRepository = static::getContainer()->get(LANPartyRepository::class);
         $lanparty = $LANPartyRepository->findOneBy(['registrationOpen' => false], ['id' => 'DESC'], 1, 0);
+
+        $registrationRepository = static::getContainer()->get(RegistrationRepository::class);
+		$registrationRepository->removeRegistrationIfExist($this->user->getId(), $lanparty->getId());
 
         $response = $client->request('POST', '/api/registrations', ['json' => [
 			"lanParty" => "/api/lan_parties/".$lanparty->getId()
