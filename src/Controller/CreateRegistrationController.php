@@ -35,7 +35,7 @@ class CreateRegistrationController extends AbstractController
 			throw new HttpException(422, 'This LAN Party is closed to registrations !');
 		}
 
-		// check is user is not already registered to this LAN
+		// check if user is not already registered to this LAN
         $result = $this->repository->findOneBy(['account' => $registration->getAccount(), 'lanParty' => $registration->getLanParty()], ['id' => 'DESC'], 1, 0);
 		if ($result !== null) {
 			throw new HttpException(422, 'This user is already registered in this LANParty !');

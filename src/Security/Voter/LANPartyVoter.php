@@ -36,11 +36,7 @@ class LANPartyVoter extends Voter
 		switch ($attribute) {
             case 'LANPARTY_STAFF':
 				$lan_party_id = $subject->getId();
-				$staff_registrations = $this->repository->findStaff($lan_party_id);
-
-				foreach ($staff_registrations as $staff) {
-					if ($staff->getAccount() == $user) { return true; }
-				}
+				return $this->repository->isStaffInLAN($user->getId(), $lan_party_id);
                 break;
         }
 

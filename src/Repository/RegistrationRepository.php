@@ -51,6 +51,20 @@ class RegistrationRepository extends ServiceEntityRepository
         ;
     }
 
+    public function isStaffInLAN(int $user_id, int $lan_id): bool
+    {
+        $result = $this->createQueryBuilder('r')
+			->innerJoin('App\Entity\LANParty', 'lp', 'WITH', 'lp.id = r.lanParty')
+            ->andWhere('lp.id = :lan_id')
+            ->andWhere('r.account = :user')
+            ->andWhere("r.roles LIKE '%\"STAFF\"%'")
+            ->setParameter('lan_id', $lan_id)
+            ->setParameter('user', $user_id)
+            ->getQuery()
+            ->getResult();
+		return !empty($result);
+    }
+
 	public function findByRole(array $roles): array
 	{
 		$qb = $this->createQueryBuilder('r');

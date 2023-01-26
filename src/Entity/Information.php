@@ -3,14 +3,45 @@
 namespace App\Entity;
 
 use DateTime;
+use App\Entity\LANParty;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Post;
 use Doctrine\DBAL\Types\Types;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\InformationRepository;
 use Doctrine\Common\Collections\Collection;
+use App\Controller\UpsertInformationController;
+use App\Controller\LANPartyCollectionController;
 use Doctrine\Common\Collections\ArrayCollection;
 
-#[ApiResource]
+#[ApiResource(
+    uriTemplate: '/lan_parties/{lanId}/informations',
+    uriVariables: [
+        'lanId' => new Link(fromClass: LANParty::class, toProperty: 'lanParty'),
+    ],
+    operations: [
+		new GetCollection(controller: LANPartyCollectionController::class),
+		new Post(read: false, controller: UpsertInformationController::class)
+	]
+)]
+#[ApiResource(
+    uriTemplate: '/lan_parties/{lanId}/informations/{id}',
+    uriVariables: [
+        'lanId' => new Link(fromClass: LANParty::class, toProperty: 'lanParty'),
+        'id' => new Link(fromClass: Information::class),
+    ],
+    operations: [
+		new Get(security: "is_granted('PLAYER', object)"),
+		new Put(security: "is_granted('STAFF', object)", controller: UpsertInformationController::class),
+		new Delete(security: "is_granted('STAFF', object)")
+	]
+)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: InformationRepository::class)]
 class Information
@@ -27,10 +58,12 @@ class Information
     private ?string $content = null;
 
     #[ORM\ManyToMany(targetEntity: User::class)]
+	#[ApiProperty(securityPostDenormalize: "is_granted('ROLE_ADMIN')")]
     private Collection $author;
 
     #[ORM\ManyToOne(inversedBy: 'information')]
     #[ORM\JoinColumn(nullable: false)]
+	#[ApiProperty(securityPostDenormalize: "is_granted('ROLE_ADMIN')")]
     private ?LANParty $lanParty = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

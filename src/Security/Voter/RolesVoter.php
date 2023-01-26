@@ -2,13 +2,14 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Information;
 use App\Entity\Registration;
 use App\Repository\RegistrationRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class RegistrationVoter extends Voter
+class RolesVoter extends Voter
 {
     private RegistrationRepository $repository;
 
@@ -19,8 +20,9 @@ class RegistrationVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        $supportsAttribute = in_array($attribute, ['REGISTRATION_STAFF']);
-        $supportsSubject = $subject instanceof Registration;
+        $supportsAttribute = in_array($attribute, ['STAFF', 'PLAYER']);
+        $supportsSubject = $subject instanceof Registration
+							|| $subject instanceof Information;
 
         return $supportsAttribute && $supportsSubject;
     }
@@ -34,14 +36,14 @@ class RegistrationVoter extends Voter
         }
 
 		switch ($attribute) {
-            case 'REGISTRATION_STAFF':
+            case 'STAFF':
 				$lan_party_id = $subject->getLanParty()->getId();
-				$staff_registrations = $this->repository->findStaff($lan_party_id);
-
-				foreach ($staff_registrations as $staff) {
-					if ($staff->getAccount() == $user) { return true; }
-				}
+				return $this->repository->isStaffInLAN($user->getId(), $lan_party_id);
                 break;
+			case 'PLAYER':
+				$lan_party_id = $subject->getLanParty()->getId();
+				return $this->repository->isUserRegistered($user->getId(), $lan_party_id);
+				break;
         }
 
         return false;

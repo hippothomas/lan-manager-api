@@ -3,6 +3,7 @@
 namespace App\Doctrine;
 
 use App\Entity\LANParty;
+use App\Entity\Information;
 use App\Entity\Registration;
 use Doctrine\ORM\QueryBuilder;
 use ApiPlatform\Metadata\Operation;
@@ -40,8 +41,9 @@ final class CurrentUserExtension implements QueryCollectionExtensionInterface, Q
 			return;
 		}
 
-		if (Registration::class == $resourceClass) {
-			// Filter to return only Registrations from LANParty where the user is registered
+		if (Registration::class == $resourceClass
+			|| Information::class == $resourceClass) {
+			// Filter to return only entities from LANParty where the user is registered
 			$rootAlias = $queryBuilder->getRootAliases()[0];
 			$queryBuilder->andWhere(
 				$queryBuilder->expr()->in(

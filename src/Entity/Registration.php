@@ -20,8 +20,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 	new GetCollection(security: "is_granted('ROLE_USER')"),
 	new Get(security: "is_granted('ROLE_USER')"),
 	new Post(security: "is_granted('ROLE_USER')", controller: CreateRegistrationController::class),
-	new Put(security: "is_granted('REGISTRATION_STAFF', object)"),
-	new Delete(security: "object.getAccount() == user or is_granted('REGISTRATION_STAFF', object)"),
+	new Put(security: "is_granted('STAFF', object)"),
+	new Delete(security: "object.getAccount() == user or is_granted('STAFF', object)"),
 ])]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: RegistrationRepository::class)]
@@ -34,7 +34,7 @@ class Registration
 
     #[ORM\ManyToOne(inversedBy: 'registrations')]
     #[ORM\JoinColumn(nullable: false)]
-	#[ApiProperty(securityPostDenormalize: "is_granted('REGISTRATION_STAFF', object)")]
+	#[ApiProperty(securityPostDenormalize: "is_granted('STAFF', object)")]
     private ?User $account = null;
 
     #[ORM\ManyToOne(inversedBy: 'registrations')]
@@ -42,11 +42,11 @@ class Registration
     private ?LANParty $lanParty = null;
 
     #[ORM\Column(type: Types::ARRAY)]
-	#[ApiProperty(securityPostDenormalize: "is_granted('REGISTRATION_STAFF', object)")]
+	#[ApiProperty(securityPostDenormalize: "is_granted('STAFF', object)")]
     private array $roles = [];
 
     #[ORM\Column(length: 255)]
-	#[ApiProperty(securityPostDenormalize: "is_granted('REGISTRATION_STAFF', object)")]
+	#[ApiProperty(securityPostDenormalize: "is_granted('STAFF', object)")]
     private ?string $status = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
