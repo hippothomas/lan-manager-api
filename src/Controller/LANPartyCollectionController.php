@@ -27,6 +27,10 @@ class LANPartyCollectionController extends AbstractController
 
     public function __invoke(PaginatorInterface $data, Request $request): PaginatorInterface
     {
+		// check if user is connected
+		$user = $this->getUser();
+		if (!$user instanceof UserInterface) { throw new HttpException(401, 'Unauthorized'); }
+
 		// check if the lan party exist
 		$lanId  = $request->attributes->get("lanId");
 		$lan_party = $this->lan_repository->findOneById($lanId);

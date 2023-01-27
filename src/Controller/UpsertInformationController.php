@@ -30,7 +30,7 @@ class UpsertInformationController extends AbstractController
     public function __invoke(Information $information, Request $request): Information
     {
 		$user = $this->getUser();
-		if (!$user instanceof UserInterface) { throw new HttpException(500, 'Internal error'); }
+		if (!$user instanceof UserInterface) { throw new HttpException(401, 'Unauthorized'); }
 
 		$method = $request->getMethod();
 		$lan_party_id = $request->attributes->get("lanId");
