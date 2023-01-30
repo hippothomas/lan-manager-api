@@ -72,7 +72,7 @@ class LANPartyTest extends ApiTestCase
 			"location" => "Paris, France",
 			"coverImage" => "https://picsum.photos/id/237/600/400",
 			"website" => "https://amazinglan.com",
-			"cost" => 23.99,
+			"cost" => "23.99",
 			"description" => "You should really come to my amazing LAN Party !",
 			"dateStart" => $dateStart,
 			"dateEnd" => $dateEnd
@@ -90,7 +90,7 @@ class LANPartyTest extends ApiTestCase
 			"location" => "Paris, France",
 			"coverImage" => "https://picsum.photos/id/237/600/400",
 			"website" => "https://amazinglan.com",
-			"cost" => 23.99,
+			"cost" => "23.99",
 			"description" => "You should really come to my amazing LAN Party !",
 			"dateStart" => $dateStart,
 			"dateEnd" => $dateEnd,
@@ -128,7 +128,7 @@ class LANPartyTest extends ApiTestCase
 			"location" => "Paris, France",
 			"coverImage" => "https://picsum.photos/id/237/600/400",
 			"website" => "https://amazinglan.com",
-			"cost" => 23.99,
+			"cost" => "23.99",
 			"description" => "You should really come to my amazing LAN Party !",
 			"dateStart" => $dateStart,
 			"dateEnd" => $dateEnd
