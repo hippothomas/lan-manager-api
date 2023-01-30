@@ -4,6 +4,9 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    oauth.discord.id: '%env(OAUTH_DISCORD_ID)%'
+    oauth.discord.secret: '%env(OAUTH_DISCORD_SECRET)%'
+    oauth.discord.url: '%env(OAUTH_DISCORD_URL)%'
 
 services:
     # default configuration for services in *this* file
@@ -38,3 +41,7 @@ services:
         tags:
             - { name: api_platform.doctrine.orm.query_extension.collection }
             - { name: api_platform.doctrine.orm.query_extension.item }
+
+    App\OpenApi\TokenDecorator:
+        decorates: 'api_platform.openapi.factory'
+        arguments: ['@.inner']
