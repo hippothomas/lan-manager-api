@@ -45,3 +45,8 @@ services:
     App\OpenApi\TokenDecorator:
         decorates: 'api_platform.openapi.factory'
         arguments: ['@.inner']
+
+    App\EventListener\LogRequestAndResponseEventListener:
+        tags:
+            - { 'name': 'monolog.logger', 'channel': 'request_log' }
+            - { 'name': 'kernel.event_listener', 'event': 'kernel.terminate', 'method': 'onKernelTerminate' }
