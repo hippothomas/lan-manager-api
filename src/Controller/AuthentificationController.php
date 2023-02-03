@@ -21,12 +21,10 @@ class AuthentificationController extends AbstractController
     #[Route('/api/token', methods: ['POST'], name: 'api_token')]
     public function index(Request $request): JsonResponse
     {
-        $body = json_decode($request->getContent(), true);
+		$code = $request->get('code');
+		$type = $request->get('type');
 
-		if (!empty($body["type"]) && !empty($body["code"])) {
-			$type = $body["type"];
-			$code = $body["code"];
-
+		if (!empty($code) && !empty($type)) {
 			if ($type == "discord") {
 				$endpoint = "https://discord.com/api/oauth2/token";
 				$headers = [
@@ -39,6 +37,7 @@ class AuthentificationController extends AbstractController
 						'code' => $code,
 						'redirect_uri' => $this->getParameter('oauth.discord.url')
 				];
+				if (!empty($request->get('code_verifier'))) { $body["code_verifier"] = $request->get('code_verifier'); }
 				$response = $this->client->request('POST', $endpoint, [
 					'headers' => $headers,
 					'body' => $body
@@ -52,7 +51,8 @@ class AuthentificationController extends AbstractController
 				$response = [
 					"source" => "discord",
 					"access_token" => $content["access_token"],
-					"expires_in" => 604800
+					"expires_in" => $content["expires_in"],
+					"refresh_token" => $content["refresh_token"]
 				];
 
 				return $this->json($response);
