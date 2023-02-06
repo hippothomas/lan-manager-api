@@ -46,6 +46,10 @@ services:
         decorates: 'api_platform.openapi.factory'
         arguments: ['@.inner']
 
+    App\OpenApi\UserDecorator:
+        decorates: 'api_platform.openapi.factory'
+        arguments: ['@.inner']
+
     App\EventListener\LogRequestAndResponseEventListener:
         tags:
             - { 'name': 'monolog.logger', 'channel': 'request_log' }

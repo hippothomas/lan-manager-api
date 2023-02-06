@@ -5,3 +5,11 @@ controllers:
     type: attribute
     defaults:
         _format: json
+
+api_me:
+    path: '/api/users/@me'
+    methods: ['GET']
+    defaults:
+        _controller: '\App\Controller\CurrentUserController::userInformations'
+        _api_resource_class: 'App\Entity\User'
+        _api_collection_operation_name: 'current_user_infos'

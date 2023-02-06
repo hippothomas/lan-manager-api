@@ -19,7 +19,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ApiResource(operations: [
 	new GetCollection(security: "is_granted('ROLE_USER')"),
-	new Get(security: "is_granted('ROLE_USER')"),
+	new Get(requirements: ["id" => "^[0-9]+$"], security: "is_granted('ROLE_USER')"),
+	new Get(name: 'current_user', routeName: 'current_user_infos', security: "is_granted('ROLE_USER')"),
 	new Put(security: "object == user"),
 	new Delete(security: "object == user"),
 ])]
