@@ -17,7 +17,10 @@ class CurrentUserController extends AbstractController
 {
     public function userInformations(TokenStorageInterface $tokenStorage, SerializerInterface $serializer): JsonResponse
     {
-		$user = $tokenStorage->getToken()->getUser();
+		$token = $tokenStorage->getToken();
+		if ($token == null) { throw new HttpException(401, 'Unauthorized'); }
+
+		$user = $token->getUser();
 		if (!$user instanceof UserInterface) { throw new HttpException(401, 'Unauthorized'); }
 
         $json = $serializer->serialize($user, 'json');
