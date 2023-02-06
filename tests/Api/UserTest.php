@@ -41,6 +41,36 @@ class UserTest extends ApiTestCase
 		]);
     }
 
+    public function testGetMe(): void
+    {
+		$client = static::createClient();
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy([], ['id' => 'DESC'], 1, 0);
+		$client->loginUser($user);
+
+        $response = $client->request('GET', '/api/users/@me');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains([
+			"username" => $user->getUsername(),
+			"roles" => $user->getRoles(),
+			"registrations" => []
+		]);
+        $this->assertMatchesResourceItemJsonSchema(User::class);
+    }
+
+    public function testGetMeNotConnected(): void
+    {
+        $response = static::createClient()->request('GET', '/api/users/@me');
+        $this->assertResponseStatusCodeSame(401);
+        $this->assertJsonContains([
+			"@context" => "/api/contexts/Error",
+			"@type" => "hydra:Error",
+			"hydra:title" => "An error occurred"
+		]);
+    }
+
     public function testGetSingleUser(): void
 	{
 		$client = static::createClient();
